@@ -8,7 +8,7 @@ A full-stack web application for analyzing PDF documents using AI-powered insigh
 
 ## 📸 Project Preview
 
-![Blogify Application Screenshot](https://github.com/user-attachments/assets/3dc1450f-a4c8-4ffd-8d36-9cba116544fa)
+![Blogify Application Screenshot](https://github.com/user-attachments/assets/0fd00664-0cab-4df0-ba22-e78f4ab81c19)
 
 ---
 ## Features
