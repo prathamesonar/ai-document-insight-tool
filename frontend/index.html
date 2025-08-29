@@ -77,7 +77,7 @@
     <script>
         const navTabs = document.getElementById('nav-tabs');
         const mainContent = document.getElementById('main-content');
-        const API_BASE_URL = 'http://127.0.0.1:8000'; // Backend URL
+        const API_BASE_URL = `https://${window.location.hostname.replace('-00-', '-8000-00-')}`; // Backend URL
 
         // App state
         let state = {

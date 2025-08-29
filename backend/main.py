@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 # Corrected Sarvam AI API Details and Key Loading
 SARVAM_API_KEY = os.getenv("SARVAM_API_KEY")
 # NOTE: This is the documented API endpoint for Sarvam.
-SARVAM_API_URL = "https://api.sarvam.ai/v1/llm/chat/completions"
+SARVAM_API_URL = "https://api.sarvam.ai/chat/completions"
 
 DATABASE = 'document_insights.db'
 UPLOADS_DIR = 'uploads'
@@ -95,15 +95,17 @@ def get_ai_summary(text: str) -> Union[str, None]:
         return None
 
     headers = {
-        "Authorization": f"Bearer {SARVAM_API_KEY}",
+        "API-Subscription-Key": SARVAM_API_KEY,
         "Content-Type": "application/json"
     }
-    # Using a common model, you may need to adjust this based on Sarvam's documentation
+    # Using the correct Sarvam AI model
     payload = {
-        "model": "sm-flan-t5-large-v1",
+        "model": "sarvam-m",
         "messages": [
             {"role": "user", "content": f"Please provide a concise summary of the following document:\n\n{text}"}
-        ]
+        ],
+        "max_tokens": 500,
+        "temperature": 0.7
     }
 
     try:
@@ -164,6 +166,7 @@ async def upload_resume(file: UploadFile = File(...)):
     if summary:
         processed_by = "AI"
         insights_to_db = summary
+        keywords = []  # Initialize keywords for response
     else:
         processed_by = "Keyword"
         keywords = get_keyword_analysis(text_content)
@@ -189,7 +192,7 @@ async def upload_resume(file: UploadFile = File(...)):
         insights=insights_response
     )
 
-@app.get("/insights/", response_model=List[Document])
+@app.get("/history/", response_model=List[Document])
 def get_all_insights():
     conn = get_db_connection()
     docs_from_db = conn.execute('SELECT * FROM documents ORDER BY upload_date DESC').fetchall()
