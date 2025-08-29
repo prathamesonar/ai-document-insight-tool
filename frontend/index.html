@@ -263,21 +263,30 @@
             updateActiveTab();
         };
 
-        const fetchHistory = async () => {
+         const fetchHistory = async (showLoader = true) => {
+        if (showLoader) {
             state.isLoading = true;
             render();
-            try {
-                const response = await fetch(`${API_BASE_URL}/history/`);
-                if (!response.ok) throw new Error('Failed to fetch history.');
-                state.history = await response.json();
-                state.error = null;
-            } catch (err) {
-                state.error = err.message;
-            } finally {
-                state.isLoading = false;
-                render();
+        }
+        try {
+            const response = await fetch(`${API_BASE_URL}/history/`);
+            if (!response.ok) throw new Error('Failed to fetch history.');
+            const newHistory = await response.json();
+
+            
+            if (JSON.stringify(newHistory) !== JSON.stringify(state.history)) {
+                state.history = newHistory;
+                render(); 
             }
-        };
+            state.error = null;
+        } catch (err) {
+            state.error = err.message;
+            if (showLoader) render();
+        } finally {
+            state.isLoading = false;
+            if (showLoader) render();
+        }
+    };
 
         const uploadFile = async (file) => {
             if (!file) {
@@ -313,21 +322,24 @@
             }
         };
 
-        const handleTabClick = (e) => {
-            const tabButton = e.target.closest('.tab-btn');
-            if (!tabButton) return;
-            
-            const tabName = tabButton.dataset.tab;
-            if (state.currentTab !== tabName) {
-                state.currentTab = tabName;
-                state.error = null;
-                if (tabName === 'history' && state.history.length === 0) {
-                    fetchHistory();
-                } else {
-                    render();
-                }
+          const handleTabClick = (e) => {
+        const tabButton = e.target.closest('.tab-btn');
+        if (!tabButton) return;
+
+        const tabName = tabButton.dataset.tab;
+        if (state.currentTab !== tabName) {
+            state.currentTab = tabName;
+            state.error = null;
+            if (tabName === 'history') {
+                
+                render();
+                
+                fetchHistory(false);
+            } else {
+                render();
             }
-        };
+        }
+    };
 
         const updateActiveTab = () => {
             document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -422,9 +434,11 @@
         };
 
         const init = () => {
-            navTabs.addEventListener('click', handleTabClick);
-            render();
-        };
+        navTabs.addEventListener('click', handleTabClick);
+        render();
+        
+        fetchHistory(false);
+    };
 
         init();
     </script>
