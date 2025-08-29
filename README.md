@@ -11,7 +11,7 @@ A full-stack web application for analyzing PDF documents using AI-powered insigh
 - **Responsive UI**: Clean, modern interface built with Tailwind CSS
 ---
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 - **Frontend:** HTML, TailwindCSS, JavaScript  
 - **Backend:** FastAPI (Python)  
