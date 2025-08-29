@@ -1,5 +1,3 @@
-# backend/main.py
-
 import os
 import re
 import collections
@@ -15,17 +13,17 @@ import sqlite3
 from datetime import datetime
 import uuid
 
-# --- Configuration & Setup ---
+
 load_dotenv()
 
-# Setup detailed logging to see exactly what's happening
+
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-# Corrected Sarvam AI API Details and Key Loading
+
 SARVAM_API_KEY = os.getenv("SARVAM_API_KEY")
-# NOTE: This is the documented API endpoint for Sarvam.
-SARVAM_API_URL = "https://api.sarvam.ai/chat/completions"
+
+SARVAM_API_URL = "https://api.sarvam.ai/v1/chat/completions"
 
 DATABASE = 'document_insights.db'
 UPLOADS_DIR = 'uploads'
@@ -33,7 +31,7 @@ os.makedirs(UPLOADS_DIR, exist_ok=True)
 
 app = FastAPI()
 
-# --- CORS Middleware ---
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -42,7 +40,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# --- Database Setup ---
+
 def get_db_connection():
     conn = sqlite3.connect(DATABASE)
     conn.row_factory = sqlite3.Row
@@ -65,7 +63,7 @@ def create_table():
 
 create_table()
 
-# --- Pydantic Models ---
+
 class KeywordInsight(BaseModel):
     top_keywords: List[str]
 
@@ -77,7 +75,7 @@ class Document(BaseModel):
     processed_by: str
     insights: Union[str, KeywordInsight]
 
-# --- Helper Functions ---
+
 def extract_text_from_pdf(file_path: str) -> str:
     try:
         with open(file_path, 'rb') as f:
@@ -95,10 +93,10 @@ def get_ai_summary(text: str) -> Union[str, None]:
         return None
 
     headers = {
-        "API-Subscription-Key": SARVAM_API_KEY,
+        "Authorization": f"Bearer {SARVAM_API_KEY}",
         "Content-Type": "application/json"
     }
-    # Using the correct Sarvam AI model
+    
     payload = {
         "model": "sarvam-m",
         "messages": [
@@ -111,7 +109,7 @@ def get_ai_summary(text: str) -> Union[str, None]:
     try:
         logger.info("Contacting Sarvam AI for summary...")
         response = requests.post(SARVAM_API_URL, headers=headers, json=payload, timeout=30)
-        # This will raise an error for 4xx or 5xx status codes
+        
         response.raise_for_status()
         
         data = response.json()
@@ -119,7 +117,7 @@ def get_ai_summary(text: str) -> Union[str, None]:
         logger.info("Successfully received summary from Sarvam AI.")
         return summary
     except requests.exceptions.RequestException as e:
-        # This is the crucial new logging part!
+        
         logger.error(f"Sarvam AI API request failed: {e}")
         if e.response is not None:
             logger.error(f"Sarvam AI API Response Status: {e.response.status_code}")
@@ -140,10 +138,10 @@ def get_keyword_analysis(text: str) -> List[str]:
     most_common = collections.Counter(filtered_words).most_common(5)
     return [word for word, count in most_common]
 
-# --- API Endpoints ---
+
 @app.post("/upload-resume/", response_model=Document)
 async def upload_resume(file: UploadFile = File(...)):
-    # Save the uploaded file
+    
     file_path = os.path.join(UPLOADS_DIR, file.filename)
     try:
         with open(file_path, "wb") as buffer:
@@ -152,7 +150,7 @@ async def upload_resume(file: UploadFile = File(...)):
         logger.error(f"Failed to save uploaded file: {e}")
         raise HTTPException(status_code=500, detail="Could not save file.")
 
-    # Process the file
+   
     text_content = extract_text_from_pdf(file_path)
     if not text_content:
         raise HTTPException(status_code=400, detail="Could not extract text from PDF.")
@@ -166,11 +164,11 @@ async def upload_resume(file: UploadFile = File(...)):
     if summary:
         processed_by = "AI"
         insights_to_db = summary
-        keywords = []  # Initialize keywords for response
+        keywords = []  
     else:
         processed_by = "Keyword"
         keywords = get_keyword_analysis(text_content)
-        insights_to_db = ",".join(keywords) # Store keywords as comma-separated string
+        insights_to_db = ",".join(keywords)
 
     conn.execute(
         'INSERT INTO documents (id, filename, filesize, upload_date, processed_by, insights) VALUES (?, ?, ?, ?, ?, ?)',
@@ -181,7 +179,7 @@ async def upload_resume(file: UploadFile = File(...)):
     
     logger.info(f"Successfully processed and saved document: {file.filename}")
 
-    # Prepare response
+    
     insights_response = summary if processed_by == "AI" else KeywordInsight(top_keywords=keywords)
     return Document(
         id=doc_id,
