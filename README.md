@@ -2,7 +2,7 @@
 
 A full-stack web application for analyzing PDF documents using AI-powered insights and keyword extraction.
 
-### **Live Demo**: [https://blogify-post-your-blogs.onrender.com/](https://blogify-post-your-blogs.onrender.com/)
+### **Live Demo**: [https://ai-document-insight.onrender.com/](https://ai-document-insight.onrender.com/)
 
 ---
 
