@@ -9,7 +9,17 @@ A full-stack web application for analyzing PDF documents using AI-powered insigh
 - **Fallback Analysis**: Basic keyword extraction when AI is unavailable
 - **Document History**: View all previously uploaded documents
 - **Responsive UI**: Clean, modern interface built with Tailwind CSS
+---
 
+## 🛠️ Tech Stack
+
+- **Frontend:** HTML, TailwindCSS, JavaScript  
+- **Backend:** FastAPI (Python)  
+- **Database:** SQLite (for lightweight persistence)  
+- **AI Integration:** Sarvam AI (recommended) or any HTTP based AI service  
+- **Dev tools:** uvicorn, python venv
+
+---
 ## Prerequisites
 
 - Python 3.11 or higher
