@@ -2,6 +2,15 @@
 
 A full-stack web application for analyzing PDF documents using AI-powered insights and keyword extraction.
 
+### **Live Demo**: [https://blogify-post-your-blogs.onrender.com/](https://blogify-post-your-blogs.onrender.com/)
+
+---
+
+## 📸 Project Preview
+
+![Blogify Application Screenshot](https://github.com/user-attachments/assets/3dc1450f-a4c8-4ffd-8d36-9cba116544fa)
+
+---
 ## Features
 
 - **PDF Upload**: Drag & drop or browse to upload PDF files
