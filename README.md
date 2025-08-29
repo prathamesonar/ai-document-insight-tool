@@ -50,7 +50,7 @@ chmod +x start.sh
    pip install -r requirements.txt
    ```
 
-2. **Configure API Key (optional):**
+2. **Configure API Key :**
    Edit `backend/.env` and add your Sarvam AI API key:
    ```
    SARVAM_API_KEY=your_actual_api_key_here
