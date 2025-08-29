@@ -1,0 +1,24 @@
+# Ignore Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore virtual environment
+venv/
+
+# Ignore environment variables
+.env
+
+# Ignore database files
+*.db
+
+# Ignore uploads
+backend/uploads/*
+
+# Ignore OS/system files
+.DS_Store
+Thumbs.db
+
+# Ignore lock files
+uv.lock
